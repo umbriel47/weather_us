@@ -66,11 +66,36 @@ defmodule WeatherUS.CLI do
   end
 
   def extract_stations(body) do
-    IO.puts("extract station list")
+    import SweetXml
+    result = body |> xmap(
+      stations: [
+        ~x"//station"l,
+        id: ~x"./station_id/text()",
+        state: ~x"./state/text()",
+        station_name: ~x"./station_name/text()",
+        latitude: ~x"./latitude/text()",
+        longitude: ~x"./longitude/text()",
+      ]
+    )
   end
 
   def extract_weather(body) do
-    IO.puts "extract weather"
+    import SweetXml
+    result = body |> xmap(
+      location: ~x"//location/text()",
+      station: ~x"//station_id/text()",
+      latitude: ~x"//latitude/text()",
+      longitude: ~x"//longitude/text()",
+      observation_time: ~x"//observation_time/text()",
+      weather: ~x"//weather/text()",
+      temperature: ~x"//temperature_string/text()",
+      relative_humidity: ~x"//relative_humidity/text()",
+      wind: ~x"//wind_string/text()",
+      pressure: ~x"//pressure/text()",
+      dewpoint: ~x"//dewpoint_string/text()",
+      windchill: ~x"//windchill_string/text()",
+      visibility: ~x"//visibility_mi/text()"
+    )
   end
 
 end
