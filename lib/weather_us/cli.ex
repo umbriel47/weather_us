@@ -91,7 +91,7 @@ defmodule WeatherUS.CLI do
       temperature: ~x"//temperature_string/text()",
       relative_humidity: ~x"//relative_humidity/text()",
       wind: ~x"//wind_string/text()",
-      pressure: ~x"//pressure/text()",
+      pressure: ~x"//pressure_string/text()",
       dewpoint: ~x"//dewpoint_string/text()",
       windchill: ~x"//windchill_string/text()",
       visibility: ~x"//visibility_mi/text()"
