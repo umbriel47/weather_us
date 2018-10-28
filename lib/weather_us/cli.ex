@@ -1,3 +1,6 @@
+import WeatherUS.TableFormatter, only: [print_table_for_columns: 2]
+import SweetXml
+
 defmodule WeatherUS.CLI do
 
   @moduledoc """
@@ -43,9 +46,13 @@ defmodule WeatherUS.CLI do
   end
 
   def process(:list) do
-    WeatherUS.StationObs.fetch_stations()
-    |> decode_response
-    |> extract_stations
+    stations = WeatherUS.StationObs.fetch_stations()
+              |> decode_response
+              |> extract_stations
+    stations1 = Enum.take(stations[:stations], 5)
+
+    IO.inspect stations1
+    # print_table_for_columns(stations1, [:station])
   end
 
   def process({ station }) do
@@ -53,6 +60,7 @@ defmodule WeatherUS.CLI do
     WeatherUS.StationObs.fetch(station)
     |> decode_response
     |> extract_weather
+    |> IO.inspect
   end
 
   def decode_response({:ok, body}) do
@@ -66,7 +74,7 @@ defmodule WeatherUS.CLI do
   end
 
   def extract_stations(body) do
-    import SweetXml
+
     result = body |> xmap(
       stations: [
         ~x"//station"l,
@@ -80,7 +88,6 @@ defmodule WeatherUS.CLI do
   end
 
   def extract_weather(body) do
-    import SweetXml
     result = body |> xmap(
       location: ~x"//location/text()",
       station: ~x"//station_id/text()",
