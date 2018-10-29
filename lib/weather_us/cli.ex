@@ -8,7 +8,7 @@ defmodule WeatherUS.CLI do
   that generate a table for the weather of specific city
   """
 
-  def run(argv) do
+  def main(argv) do
     argv
     |> parse_args
     |> process
@@ -49,7 +49,7 @@ defmodule WeatherUS.CLI do
     stations = WeatherUS.StationObs.fetch_stations()
               |> decode_response
               |> extract_stations
-    stations1 = Enum.take(stations[:stations], 5)
+    stations1 = Enum.take(stations[:stations], 10)
 
     IO.inspect stations1
     # print_table_for_columns(stations1, [:station])
@@ -104,5 +104,5 @@ defmodule WeatherUS.CLI do
       visibility: ~x"//visibility_mi/text()"
     )
   end
-
+  
 end
