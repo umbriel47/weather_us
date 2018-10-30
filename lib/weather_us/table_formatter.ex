@@ -1,5 +1,11 @@
 defmodule WeatherUS.TableFormatter do
 
+  @moduledoc """
+  format the output hash-list in the format of a table
+
+  TODO: test
+  """
+
   import Enum, only: [each: 2, map: 2, map_join: 3, max: 1]
 
   def print_table_for_columns(rows, headers) do

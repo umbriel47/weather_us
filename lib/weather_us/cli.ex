@@ -28,6 +28,9 @@ defmodule WeatherUS.CLI do
       { [ help: true ], _, _}
       -> :help
 
+      { [ list: true], [file_path], _}
+      -> {:list, file_path }
+
       { [ list: true ], _, _}
       -> :list
 
@@ -40,9 +43,28 @@ defmodule WeatherUS.CLI do
 
   def process(:help) do
     IO.puts """
-    usage: weather_us <station>
+    usage: weather_us [options]
+
+    OPTIONS:
+
+    -h, --help: display this help
+    -l, --list <file_path>: load the station list and display the first 10.
+                            If no file_path, the stations will be downloaded
+                            online.
+    <station name>: display the weather of the given station
     """
     System.halt(0)
+  end
+
+  def process({:list, file_path} ) do
+
+    stations = WeatherUS.StationObs.fetch_stations(file_path)
+              |> decode_response
+              |> extract_stations
+    stations1 = Enum.take(stations[:stations], 10)
+
+    IO.inspect stations1
+
   end
 
   def process(:list) do
@@ -52,7 +74,6 @@ defmodule WeatherUS.CLI do
     stations1 = Enum.take(stations[:stations], 10)
 
     IO.inspect stations1
-    # print_table_for_columns(stations1, [:station])
   end
 
   def process({ station }) do
@@ -104,5 +125,5 @@ defmodule WeatherUS.CLI do
       visibility: ~x"//visibility_mi/text()"
     )
   end
-  
+
 end

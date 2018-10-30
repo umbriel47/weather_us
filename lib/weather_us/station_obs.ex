@@ -15,6 +15,10 @@ defmodule WeatherUS.StationObs do
     |> handle_response
   end
 
+  def fetch_stations(file) do
+    File.read(file)
+  end
+
   def xml_url(station) do
     "#{@weather_url}/#{station}.xml"
   end
