@@ -22,8 +22,10 @@ defmodule WeatherUS.CLI do
   return `:station` or `:help` if help was given
   """
   def parse_args(argv) do
-    parse = OptionParser.parse(argv, switches: [help: :boolean, list: :boolean],
-                                     aliases:  [h:    :help, l: :list])
+    parse = OptionParser.parse(argv, switches: [help: :boolean, list: :boolean,
+                                                state: :boolean, name: :boolean],
+                                     aliases:  [h:    :help, l: :list,
+                                                s: :state, n: :name])
     case parse do
       { [ help: true ], _, _}
       -> :help
@@ -34,8 +36,11 @@ defmodule WeatherUS.CLI do
       { [ list: true ], _, _}
       -> :list
 
-      {_, [ station ], _}
-      -> { station }
+      { [ state: true], [ state ], _}
+      -> {:state, state}
+
+      { [name: true], [ station ], _}
+      -> { :name, station }
 
       _ -> :help
     end
@@ -51,7 +56,9 @@ defmodule WeatherUS.CLI do
     -l, --list <file_path>: load the station list and display the first 10.
                             If no file_path, the stations will be downloaded
                             online.
-    <station name>: display the weather of the given station
+    -s, --state <state name>: list all the stations within a state
+    -n, --name <station name>: display the weather of the given station
+
     """
     System.halt(0)
   end
@@ -76,7 +83,16 @@ defmodule WeatherUS.CLI do
     IO.inspect stations1
   end
 
-  def process({ station }) do
+  def process({ :state, state }) do
+    # list all the stations within the given state
+    stations = WeatherUS.StationObs.fetch_stations()
+              |> decode_response
+              |> extract_stations
+    stations1 = Enum.take(stations[:stations], 10)
+  end
+
+
+  def process({ :name, station }) do
     #IO.puts "Hello"
     WeatherUS.StationObs.fetch(station)
     |> decode_response
