@@ -85,10 +85,10 @@ defmodule WeatherUS.CLI do
 
   def process({ :state, state }) do
     # list all the stations within the given state
-    stations = WeatherUS.StationObs.fetch_stations()
+    stations = WeatherUS.StationObs.fetch_stations("./data/index.xml")
               |> decode_response
               |> extract_stations
-    stations1 = Enum.take(stations[:stations], 10)
+    stations_for_state = extract_stations_for_state(stations[:stations], state)
   end
 
 
@@ -123,6 +123,14 @@ defmodule WeatherUS.CLI do
       ]
     )
   end
+
+  def extract_stations_for_state(stations, state) do
+    for sta = %{ state: state_name } <- stations,
+        List.to_string(state_name) == state do
+          IO.inspect sta
+        end
+  end
+
 
   def extract_weather(body) do
     result = body |> xmap(
