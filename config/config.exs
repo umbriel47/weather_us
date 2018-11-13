@@ -4,6 +4,7 @@ use Mix.Config
 
 config :weather_us, weather_url: "https://w1.weather.gov/xml/current_obs"
 config :weather_us, list_url: "https://w1.weather.gov/xml/current_obs/index.xml"
+config :logger, compile_time_purge_level: :info
 # This configuration is loaded before any dependency and is restricted
 # to this project. If another project depends on this project, this
 # file won't be loaded nor affect the parent project. For this reason,
