@@ -40,12 +40,19 @@ defmodule WeatherUS.StationObs do
     "#{@weather_url}/#{station}.xml"
   end
 
+
+  @doc """
+  Handle the returned body when the fetcher succeed
+  """
   def handle_response({_, %{status_code: 200, body: body}}) do
     Logger.info "Successful response"
     Logger.debug fn -> inspect(body) end
     {:ok, body}
   end
 
+  @doc """
+  Handle the returned body when the fetcher failed
+  """
   def handle_response({_, %{status_code: status, body: body}}) do
     Logger.error "Error #{status} returned"
     {:error, body}

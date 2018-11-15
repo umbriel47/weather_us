@@ -46,6 +46,9 @@ defmodule WeatherUS.CLI do
     end
   end
 
+  @doc """
+  Process the --help argument
+  """
   def process(:help) do
     IO.puts """
     usage: weather_us [options]
@@ -63,6 +66,10 @@ defmodule WeatherUS.CLI do
     System.halt(0)
   end
 
+  @doc """
+  Process the --list argument with a file path. It loads the station list
+  from the file and display them
+  """
   def process({:list, file_path} ) do
 
     stations = WeatherUS.StationObs.fetch_stations(file_path)
@@ -74,6 +81,10 @@ defmodule WeatherUS.CLI do
 
   end
 
+  @doc """
+  Process the --list argument when a file path is absent. It fetches the
+  station list from the website and display them.
+  """
   def process(:list) do
     stations = WeatherUS.StationObs.fetch_stations()
               |> decode_response
@@ -91,7 +102,10 @@ defmodule WeatherUS.CLI do
     stations_for_state = extract_stations_for_state(stations[:stations], state)
   end
 
-
+  @doc """
+  Process the --name argument with a station name.
+  returns: the weather at the given station
+  """
   def process({ :name, station }) do
     #IO.puts "Hello"
     WeatherUS.StationObs.fetch(station)
@@ -100,16 +114,25 @@ defmodule WeatherUS.CLI do
     |> IO.inspect
   end
 
+  @doc """
+  return: the body when the fetcher succeed
+  """
   def decode_response({:ok, body}) do
     body
   end
 
+  @doc """
+  return: the error message when the fetcher fails
+  """
   def decode_response({:error, error}) do
     {_, message} = List.keyfind(error, "message", 0)
     IO.puts "Error fetching from weather.gov: #{message}"
     System.halt(2)
   end
 
+  @doc """
+  Extract the station information from the fetched list xml file
+  """
   def extract_stations(body) do
 
     result = body |> xmap(
@@ -124,6 +147,9 @@ defmodule WeatherUS.CLI do
     )
   end
 
+  @doc """
+  Extract the station list with a given state name
+  """
   def extract_stations_for_state(stations, state) do
     for sta = %{ state: state_name } <- stations,
         List.to_string(state_name) == state do
@@ -131,7 +157,9 @@ defmodule WeatherUS.CLI do
         end
   end
 
-
+  @doc """
+  Extract the weather with the xml returned from a given station
+  """
   def extract_weather(body) do
     result = body |> xmap(
       location: ~x"//location/text()",
